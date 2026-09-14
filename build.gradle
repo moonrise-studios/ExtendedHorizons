@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'me.mapacheee'
-version = '3.1.10-release'
+version = '3.2.1-release'
 description = 'ExtendedHorizons - Advanced view distance extension plugin'
 
 java {
@@ -102,6 +102,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testCompileOnly("me.mapacheee:MapacheeeLib:1.0.1")
     testRuntimeOnly("me.mapacheee:MapacheeeLib:1.0.1")
+    testImplementation(platform("com.intellectualsites.bom:bom-newest:1.56"))
+    testImplementation("com.fastasyncworldedit:FastAsyncWorldEdit-Core") {
+        exclude group: "org.yaml", module: "snakeyaml"
+    }
 }
 
 // Workaround: Winter v2 AP reads META-INF/winter/exposed-classes.txt via

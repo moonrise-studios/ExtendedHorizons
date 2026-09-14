@@ -10,6 +10,23 @@
 ExtendedHorizons is a high-performance view-distance extension plugin for modern Paper/Folia servers.  
 It renders distant terrain using optimized fake chunks and optional far-player sync, so players can see farther than vanilla without the usual server overhead.
 
+Distant terrain is refreshed from complete snapshots, including lighting and configured anti-xray.
+Refreshes keep the previous terrain visible until the replacement arrives; they do not send an unload first.
+Pending or failed refreshes remain tracked so that leaving the view or changing dimensions still clears them.
+Block edits, explosions, pistons, fluids and growth queue a rebuild of the affected chunk and its light neighbors,
+coalesced after 100 ms without further edits. Up to 256 chunk invalidations are processed per tick.
+For changes made without Bukkit events, each player's session also checks up to 64 stored chunk slots per second
+and selects at most one snapshot older than 30 seconds for refresh. This is a gradual sweep, not a promise that
+every distant chunk updates within 30 seconds; larger distances and send budgets increase the delay.
+Plugins making bulk changes can request prompt updates through `BulkChunkInvalidationService.queueInvalidationBatch`.
+
+With `fake-chunks.worldedit.enabled`, WorldEdit changes are published after its commit operation completes;
+FAWE queued edits use a chunk post-processor, including fast edits that bypass per-block extent calls.
+Both refresh the edited chunks and their light neighbors without unloading visible terrain first.
+At startup, the log identifies `WorldEdit extent` or `FAWE chunk post-processor` registration.
+FAWE's non-queued root-extent mode may require allowing the fallback extent in FAWE's own configuration;
+EH logs that case explicitly and does not change FAWE's settings.
+
 ---
 ## Dependencies
 
